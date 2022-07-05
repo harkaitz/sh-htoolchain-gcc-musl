@@ -192,11 +192,12 @@ musl_install_scripts() {
     sudo tee "${s}" <<-EOF >/dev/null
 	#!/bin/sh -e
 	. hcross-env-c
-	hcross_env_c                      \\
-	    type=gnu                      \\
-	    path="${MUSL_TOOLDIR}/bin"    \\
-	    tool_prefix="${MUSL_TARGET}-" \\
-	    prefix="${MUSL_SYSROOT}/usr"  \\
+	hcross_env_c                            \\
+	    type=gnu                            \\
+	    path="${MUSL_TOOLDIR}/bin"          \\
+	    ldflags="-Wl,-z,stack-size=1048576" \\
+	    tool_prefix="${MUSL_TARGET}-"       \\
+	    prefix="${MUSL_SYSROOT}/usr"        \\
 	    prefixes="${MUSL_SYSROOT}/usr ${MUSL_SYSROOT}"
 	export HBUILD_PREFER_STATIC=
 	HBUILD_VARS="\${HBUILD_VARS} LIBTOOL_FAILS_SHARED"
@@ -204,7 +205,7 @@ musl_install_scripts() {
     sudo chmod +x "${s}"
     ## Static was:
     ## -static-libstdc++ -static-libgcc
-    ## -Wl,-z,stack-size=1048576
+    ## 
     ## -Wl,--exclude-libs,libz.a
     ## -Wl,--whole-archive -l:libc.a -Wl,--no-whole-archive
     ## ldflags="${libstd} ${hacks} ${exclude} ${libc}"
